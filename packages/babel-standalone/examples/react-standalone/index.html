@@ -42,6 +42,41 @@
                 .then(response => response.text())
                 .then(text => eval(text));
 
+            const load = async (url) => {
+                const normalizedFilename = (input) => {
+                    // Check if input is a full URL or just a path
+                    const url = input.startsWith('http') ? new URL(input) : new URL(input, 'http://localhost:9999');
+
+                    // Get the pathname, remove leading/trailing slashes "/"
+                    let path = url.pathname.replace(/^\/|\/$/g, '');
+
+                    // Remove 'index.js' or 'index.jsx' from the path
+                    path = path.replace(/\/index\.(js|jsx)$/i, '');
+
+                    // Split by '/' and join the segments into a single string
+                    return path.split('/').join('');
+                }
+                const filename = url.replace(/\/index\.(js|jsx)$/, "");
+
+                await fetch(url)
+                    .then(response => response.text())
+                    .then(
+                        text =>
+                            Babel.transform(text, {
+                                filename: normalizedFilename(url), // global.unknown if no filename
+                                sourceType: "module",
+                                presets: ["react"],
+                                plugins: [
+                                    [
+                                        Babel.availablePlugins["transform-modules-umd"],
+                                        { exactGlobals: true },
+                                    ],
+                                ],
+                            }).code
+                    )
+                    .then(code => eval(code));
+            }
+
             await fetch("/components/A/index.jsx")
                 .then(response => response.text())
                 .then(
