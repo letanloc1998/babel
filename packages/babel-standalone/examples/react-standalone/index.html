@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
 
     <!--
@@ -31,7 +31,9 @@
                 .then(response => response.text())
                 .then(text => eval(text));
 
-            await fetch("https://unpkg.com/react-dom@18/umd/react-dom.development.js")
+            await fetch(
+                "https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+            )
                 .then(response => response.text())
                 .then(text => eval(text));
 
@@ -40,20 +42,69 @@
                 .then(response => response.text())
                 .then(text => eval(text));
 
+            await fetch("/components/A/index.jsx")
+                .then(response => response.text())
+                .then(
+                    text =>
+                        Babel.transform(text, {
+                            filename: "componentsA",
+                            sourceType: "module",
+                            presets: ["react"],
+                            plugins: [
+                                [
+                                    Babel.availablePlugins["transform-modules-umd"],
+                                    { exactGlobals: true },
+                                ],
+                            ],
+                        }).code
+                )
+                // .then(code => code.replace("global.unknown = mod.exports", "global.App = mod.exports"))
+                // .then(code => console.log(code))
+                .then(code => eval(code));
+
             await fetch("/App.jsx")
                 .then(response => response.text())
-                .then(text => Babel.transform(text, { filename: "App", sourceType: "module", presets: ["react"], plugins: ["transform-modules-umd"] }).code)
+                .then(
+                    text =>
+                        Babel.transform(text, {
+                            filename: "App",
+                            sourceType: "module",
+                            presets: ["react"],
+                            plugins: [
+                                [
+                                    Babel.availablePlugins["transform-modules-umd"],
+                                    { exactGlobals: true },
+                                ],
+                            ],
+                        }).code
+                )
                 // .then(code => code.replace("global.unknown = mod.exports", "global.App = mod.exports"))
-                // .then(code => console.log(code));
+                // .then(code => console.log(code))
                 .then(code => eval(code));
             await fetch("/index.js")
                 .then(response => response.text())
-                .then(text => Babel.transform(text, { filename: "index", sourceType: "module", presets: ["react"], plugins: ["transform-modules-umd"] }).code)
-                // .then(code => console.log(code));
+                .then(
+                    text =>
+                        Babel.transform(text, {
+                            filename: "index",
+                            sourceType: "module",
+                            presets: ["react"],
+                            plugins: [
+                                [
+                                    Babel.availablePlugins["transform-modules-umd"],
+                                    { exactGlobals: true },
+                                ],
+                            ],
+                        }).code
+                )
+                // .then(code => console.log(code))
                 .then(code => eval(code));
         });
 
-        Array.from(document.body.getElementsByTagName('script')).forEach(script => script.remove());
+        Array.from(document.body.getElementsByTagName("script")).forEach(script =>
+            script.remove()
+        );
+        // window.location.href = "/"
     </script>
 
     <!-- <script>
