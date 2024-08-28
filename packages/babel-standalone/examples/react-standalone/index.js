@@ -1,6 +1,6 @@
 // Copyright (c) 2024 Le Tan Loc. All rights reserved
 
-import App from "./App.jsx";
+import App from "./App";
 
 // React 17
 // ReactDOM.render(<App />, document.querySelector("#root"));
