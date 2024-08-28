@@ -50,8 +50,8 @@
                     // Get the pathname, remove leading/trailing slashes "/"
                     let path = url.pathname.replace(/^\/|\/$/g, '');
 
-                    // Remove 'index.js' or 'index.jsx' from the path
-                    path = path.replace(/\/index\.(js|jsx)$/i, '');
+                    // Remove 'index.js', 'index.jsx', '.js', '.jsx'
+                    path = path.replace(/(\/index)?\.(js|jsx)$/i, '');
 
                     // Split by '/' and join the segments into a single string
                     return path.split('/').join('');
@@ -74,66 +74,73 @@
                                 ],
                             }).code
                     )
+                    // .then(code => console.log(code))
                     .then(code => eval(code));
             }
 
-            await fetch("/components/A/index.jsx")
-                .then(response => response.text())
-                .then(
-                    text =>
-                        Babel.transform(text, {
-                            filename: "componentsA",
-                            sourceType: "module",
-                            presets: ["react"],
-                            plugins: [
-                                [
-                                    Babel.availablePlugins["transform-modules-umd"],
-                                    { exactGlobals: true },
-                                ],
-                            ],
-                        }).code
-                )
-                // .then(code => code.replace("global.unknown = mod.exports", "global.App = mod.exports"))
-                // .then(code => console.log(code))
-                .then(code => eval(code));
+            // await fetch("/components/A/index.jsx")
+            //     .then(response => response.text())
+            //     .then(
+            //         text =>
+            //             Babel.transform(text, {
+            //                 filename: "componentsA",
+            //                 sourceType: "module",
+            //                 presets: ["react"],
+            //                 plugins: [
+            //                     [
+            //                         Babel.availablePlugins["transform-modules-umd"],
+            //                         { exactGlobals: true },
+            //                     ],
+            //                 ],
+            //             }).code
+            //     )
+            //     // .then(code => code.replace("global.unknown = mod.exports", "global.App = mod.exports"))
+            //     // .then(code => console.log(code))
+            //     .then(code => eval(code));
 
-            await fetch("/App.jsx")
-                .then(response => response.text())
-                .then(
-                    text =>
-                        Babel.transform(text, {
-                            filename: "App",
-                            sourceType: "module",
-                            presets: ["react"],
-                            plugins: [
-                                [
-                                    Babel.availablePlugins["transform-modules-umd"],
-                                    { exactGlobals: true },
-                                ],
-                            ],
-                        }).code
-                )
-                // .then(code => code.replace("global.unknown = mod.exports", "global.App = mod.exports"))
-                // .then(code => console.log(code))
-                .then(code => eval(code));
-            await fetch("/index.js")
-                .then(response => response.text())
-                .then(
-                    text =>
-                        Babel.transform(text, {
-                            filename: "index",
-                            sourceType: "module",
-                            presets: ["react"],
-                            plugins: [
-                                [
-                                    Babel.availablePlugins["transform-modules-umd"],
-                                    { exactGlobals: true },
-                                ],
-                            ],
-                        }).code
-                )
-                // .then(code => console.log(code))
-                .then(code => eval(code));
+            // await fetch("/App.jsx")
+            //     .then(response => response.text())
+            //     .then(
+            //         text =>
+            //             Babel.transform(text, {
+            //                 filename: "App",
+            //                 sourceType: "module",
+            //                 presets: ["react"],
+            //                 plugins: [
+            //                     [
+            //                         Babel.availablePlugins["transform-modules-umd"],
+            //                         { exactGlobals: true },
+            //                     ],
+            //                 ],
+            //             }).code
+            //     )
+            //     // .then(code => code.replace("global.unknown = mod.exports", "global.App = mod.exports"))
+            //     // .then(code => console.log(code))
+            //     .then(code => eval(code));
+            // await fetch("/index.js")
+            //     .then(response => response.text())
+            //     .then(
+            //         text =>
+            //             Babel.transform(text, {
+            //                 filename: "index",
+            //                 sourceType: "module",
+            //                 presets: ["react"],
+            //                 plugins: [
+            //                     [
+            //                         Babel.availablePlugins["transform-modules-umd"],
+            //                         { exactGlobals: true },
+            //                     ],
+            //                 ],
+            //             }).code
+            //     )
+            //     // .then(code => console.log(code))
+            //     .then(code => eval(code));
+
+            await load("/components/C.jsx");
+            await load("/components/B/index.jsx");
+            await load("/components/A/index.jsx");
+            await load("/App.jsx");
+            await load("/index.js");
         });
 
         Array.from(document.body.getElementsByTagName("script")).forEach(script =>
