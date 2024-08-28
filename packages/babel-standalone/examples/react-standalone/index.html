@@ -15,9 +15,59 @@
 <body>
     <div id="root"></div>
 
+    <!-- {
+        "filename": "http://localhost:3000/index.js",
+        "presets": [
+            "react"
+        ],
+        "plugins": [
+            "transform-modules-umd"
+        ],
+        "sourceMaps": "inline",
+        "sourceFileName": "http://localhost:3000/index.js"
+    } -->
+
     <!--
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="/babel.js"></script>
 
+    <script>
+        Babel.registerPreset("reactjs", {
+            presets: [[Babel.availablePresets["react"]]],
+            plugins: [
+                [
+                    Babel.availablePlugins["transform-modules-umd"],
+                    { exactGlobals: true },
+                ],
+            ],
+        });
+    </script>
+
+    <script type="text/babel" data-presets="reactjs" src="/components/C.jsx"></script>
+    <script type="text/babel" data-presets="reactjs" src="/components/B/index.jsx"></script>
+    <script type="text/babel" data-presets="reactjs" src="/components/A/index.jsx"></script>
+    <script type="text/babel" data-presets="reactjs" src="/App.jsx"></script>
+    <script type="text/babel" data-presets="reactjs" src="/index.js"></script>
+    -->
+
+    <!--
+    {
+        "filename": "http://localhost:3000/components/A/index.jsx",
+        "presets": [
+            "reactjs"
+        ],
+        "plugins": [
+            "transform-class-properties",
+            "transform-object-rest-spread",
+            "transform-flow-strip-types"
+        ],
+        "sourceMaps": "inline",
+        "sourceFileName": "http://localhost:3000/components/A/index.jsx"
+    }
+    -->
+
+    <!--
     <script type="text/babel" data-presets="react" data-type="module" data-plugins="transform-modules-umd"
         src="/App.jsx"></script>
     <script type="text/babel" data-presets="react" data-type="module" data-plugins="transform-modules-umd"
@@ -42,30 +92,32 @@
                 .then(response => response.text())
                 .then(text => eval(text));
 
-            const load = async (url) => {
-                const normalizedFilename = (input) => {
+            const load = async url => {
+                const normalizedFilename = input => {
                     // Check if input is a full URL or just a path
-                    const url = input.startsWith('http') ? new URL(input) : new URL(input, 'http://localhost:9999');
+                    const url = input.startsWith("http")
+                        ? new URL(input)
+                        : new URL(input, "http://localhost:9999");
 
                     // Get the pathname, remove leading/trailing slashes "/"
-                    let path = url.pathname.replace(/^\/|\/$/g, '');
+                    let path = url.pathname.replace(/^\/|\/$/g, "");
 
                     // Remove 'index.js', 'index.jsx', '.js', '.jsx'
-                    path = path.replace(/(\/index)?\.(js|jsx)$/i, '');
+                    path = path.replace(/(\/index)?\.(js|jsx)$/i, "");
 
                     // Split by '/' and join the segments into a single string
-                    return path.split('/').join('');
-                }
-                const filename = url.replace(/\/index\.(js|jsx)$/, "");
+                    return path.split("/").join("");
+                };
 
                 await fetch(url)
                     .then(response => response.text())
                     .then(
                         text =>
                             Babel.transform(text, {
-                                filename: normalizedFilename(url), // global.unknown if no filename
+                                // filename: normalizedFilename(url), // global.unknown if no filename
+                                filename: new URL(url, window.location.href).href, // only apply baseURL for relative or absolute path
                                 sourceType: "module",
-                                presets: ["react"],
+                                presets: [[Babel.availablePresets["react"]]],
                                 plugins: [
                                     [
                                         Babel.availablePlugins["transform-modules-umd"],
@@ -76,7 +128,7 @@
                     )
                     // .then(code => console.log(code))
                     .then(code => eval(code));
-            }
+            };
 
             // await fetch("/components/A/index.jsx")
             //     .then(response => response.text())
