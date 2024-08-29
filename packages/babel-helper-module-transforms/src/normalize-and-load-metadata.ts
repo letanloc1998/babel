@@ -181,7 +181,14 @@ export default function normalizeModuleAndLoadMetadata(
     exportNameListName: null,
     hasExports,
     local,
-    source: sources,
+    // source: sources,
+    // window.location.href
+    source: new Map(
+      [...sources].map(([key, value]) => [
+        new URL(key, new URL(filename, "https://localhost").href).pathname,
+        value
+      ])
+    ),
     stringSpecifiers,
   };
 }

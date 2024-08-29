@@ -127,7 +127,7 @@
                         getModuleId: (moduleName) => {
                             // moduleIds: true
                             const normalizedModuleName = moduleName.replace(/\/index$/, "").replaceAll("/", "");
-                            console.log(`${moduleName} -> ${normalizedModuleName}`)
+                            console.log(`"${moduleName}" -> "${normalizedModuleName}"`)
                             return normalizedModuleName;
                         }
                     },
