@@ -183,12 +183,16 @@ export default function normalizeModuleAndLoadMetadata(
     local,
     // source: sources,
     // window.location.href
-    source: new Map(
-      [...sources].map(([key, value]) => [
-        new URL(key, new URL(filename, "https://localhost").href).pathname,
-        value
-      ])
-    ),
+    source:
+      filename === "unknown"
+        ? sources
+        : new Map(
+            [...sources].map(([key, value]) => [
+              new URL(key, new URL(filename, "https://localhost").href)
+                .pathname,
+              value,
+            ]),
+          ),
     stringSpecifiers,
   };
 }
