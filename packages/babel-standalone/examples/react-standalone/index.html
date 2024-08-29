@@ -93,21 +93,21 @@
                 .then(text => eval(text));
 
             const load = async url => {
-                const normalizedFilename = input => {
-                    // Check if input is a full URL or just a path
-                    const url = input.startsWith("http")
-                        ? new URL(input)
-                        : new URL(input, "http://localhost:9999");
+                // const normalizedFilename = input => {
+                //     // Check if input is a full URL or just a path
+                //     const url = input.startsWith("http")
+                //         ? new URL(input)
+                //         : new URL(input, "http://localhost:9999");
 
-                    // Get the pathname, remove leading/trailing slashes "/"
-                    let path = url.pathname.replace(/^\/|\/$/g, "");
+                //     // Get the pathname, remove leading/trailing slashes "/"
+                //     let path = url.pathname.replace(/^\/|\/$/g, "");
 
-                    // Remove 'index.js', 'index.jsx', '.js', '.jsx'
-                    path = path.replace(/(\/index)?\.(js|jsx)$/i, "");
+                //     // Remove 'index.js', 'index.jsx', '.js', '.jsx'
+                //     path = path.replace(/(\/index)?\.(js|jsx)$/i, "");
 
-                    // Split by '/' and join the segments into a single string
-                    return path.split("/").join("");
-                };
+                //     // Split by '/' and join the segments into a single string
+                //     return path.split("/").join("");
+                // };
 
                 await fetch(url)
                     .then(response => response.text())
@@ -115,8 +115,9 @@
                         text =>
                             Babel.transform(text, {
                                 // filename: normalizedFilename(url), // global.unknown if no filename
-                                filename: new URL(url, window.location.href).href, // only apply baseURL for relative or absolute path
-                                sourceType: "module",
+                                // filename: new URL(url, window.location.href).href, // only apply baseURL for relative or absolute path
+                                filename: url,
+                                // sourceType: "module",
                                 presets: [[Babel.availablePresets["react"]]],
                                 plugins: [
                                     [
