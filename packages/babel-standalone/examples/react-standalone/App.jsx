@@ -76,10 +76,37 @@ const loadComponent = async () => {
     )
     .then(code => eval(code));
 
+  // return { default: window.ReactLazy.default };
   return { default: window.ReactLazy.default };
 }
 
 const ReactLazy = lazy(loadComponent);
+
+// const ReactLazy = lazy(async () => {
+//   const url = "/ReactLazy.jsx";
+//   await fetch(url)
+//     .then(response => response.text())
+//     .then(
+//       text =>
+//         Babel.transform(text, {
+//           // filename: normalizedFilename(url), // global.unknown if no filename
+//           // filename: new URL(url, window.location.href).href, // only apply baseURL for relative or absolute path
+//           filename: url,
+//           // sourceType: "module",
+//           presets: [[Babel.availablePresets["react"]]],
+//           plugins: [
+//             [
+//               Babel.availablePlugins["transform-modules-umd"],
+//               { exactGlobals: true },
+//             ],
+//           ],
+//         }).code
+//     )
+//     .then(code => eval(code));
+
+//   // return { default: window.ReactLazy.default };
+//   return { default: window.ReactLazy.default };
+// });
 
 
 const App = () => {
