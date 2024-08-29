@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
@@ -10,9 +9,9 @@
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     -->
-</head>
+  </head>
 
-<body>
+  <body>
     <div id="root"></div>
 
     <!-- {
@@ -75,136 +74,144 @@
     -->
 
     <script>
-        // window.onload = async () => {}
-        window.addEventListener("load", async () => {
-            await fetch("https://unpkg.com/react@18/umd/react.development.js")
-                .then(response => response.text())
-                .then(text => eval(text));
+      // window.onload = async () => {}
+      window.addEventListener("load", async () => {
+        await fetch("https://unpkg.com/react@18/umd/react.development.js")
+          .then(response => response.text())
+          .then(text => eval(text));
 
-            await fetch(
-                "https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+        await fetch(
+          "https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+        )
+          .then(response => response.text())
+          .then(text => eval(text));
+
+        // https://unpkg.com/@babel/standalone/babel.min.js
+        await fetch("/babel.js")
+          .then(response => response.text())
+          .then(text => eval(text));
+
+        const load = async url => {
+          // const normalizedFilename = input => {
+          //     // Check if input is a full URL or just a path
+          //     const url = input.startsWith("http")
+          //         ? new URL(input)
+          //         : new URL(input, "http://localhost:9999");
+
+          //     // Get the pathname, remove leading/trailing slashes "/"
+          //     let path = url.pathname.replace(/^\/|\/$/g, "");
+
+          //     // Remove 'index.js', 'index.jsx', '.js', '.jsx'
+          //     path = path.replace(/(\/index)?\.(js|jsx)$/i, "");
+
+          //     // Split by '/' and join the segments into a single string
+          //     return path.split("/").join("");
+          // };
+
+          await fetch(url)
+            .then(response => response.text())
+            .then(
+              text =>
+                Babel.transform(text, {
+                  // filename: normalizedFilename(url), // global.unknown if no filename
+                  // filename: new URL(url, window.location.href).href, // only apply baseURL for relative or absolute path
+                  filename: url,
+                  // sourceType: "module",
+                  presets: [[Babel.availablePresets["react"]]],
+                  plugins: [
+                    [
+                      Babel.availablePlugins["transform-modules-umd"],
+                      {
+                        exactGlobals: true,
+                        moduleIds: true,
+                        getModuleId: (moduleName) => {
+                            // moduleIds: true
+                            const normalizedModuleName = moduleName.replace(/\/index$/, "").replaceAll("/", "");
+                            console.log(`${moduleName} -> ${normalizedModuleName}`)
+                            return normalizedModuleName;
+                        }
+                    },
+                    ],
+                  ],
+                }).code
             )
-                .then(response => response.text())
-                .then(text => eval(text));
+            // .then(code => console.log(code))
+            .then(code => eval(code));
+        };
 
-            // https://unpkg.com/@babel/standalone/babel.min.js
-            await fetch("/babel.js")
-                .then(response => response.text())
-                .then(text => eval(text));
+        // await fetch("/components/A/index.jsx")
+        //     .then(response => response.text())
+        //     .then(
+        //         text =>
+        //             Babel.transform(text, {
+        //                 filename: "componentsA",
+        //                 sourceType: "module",
+        //                 presets: ["react"],
+        //                 plugins: [
+        //                     [
+        //                         Babel.availablePlugins["transform-modules-umd"],
+        //                         { exactGlobals: true },
+        //                     ],
+        //                 ],
+        //             }).code
+        //     )
+        //     // .then(code => code.replace("global.unknown = mod.exports", "global.App = mod.exports"))
+        //     // .then(code => console.log(code))
+        //     .then(code => eval(code));
 
-            const load = async url => {
-                // const normalizedFilename = input => {
-                //     // Check if input is a full URL or just a path
-                //     const url = input.startsWith("http")
-                //         ? new URL(input)
-                //         : new URL(input, "http://localhost:9999");
+        // await fetch("/App.jsx")
+        //     .then(response => response.text())
+        //     .then(
+        //         text =>
+        //             Babel.transform(text, {
+        //                 filename: "App",
+        //                 sourceType: "module",
+        //                 presets: ["react"],
+        //                 plugins: [
+        //                     [
+        //                         Babel.availablePlugins["transform-modules-umd"],
+        //                         { exactGlobals: true },
+        //                     ],
+        //                 ],
+        //             }).code
+        //     )
+        //     // .then(code => code.replace("global.unknown = mod.exports", "global.App = mod.exports"))
+        //     // .then(code => console.log(code))
+        //     .then(code => eval(code));
+        // await fetch("/index.js")
+        //     .then(response => response.text())
+        //     .then(
+        //         text =>
+        //             Babel.transform(text, {
+        //                 filename: "index",
+        //                 sourceType: "module",
+        //                 presets: ["react"],
+        //                 plugins: [
+        //                     [
+        //                         Babel.availablePlugins["transform-modules-umd"],
+        //                         { exactGlobals: true },
+        //                     ],
+        //                 ],
+        //             }).code
+        //     )
+        //     // .then(code => console.log(code))
+        //     .then(code => eval(code));
 
-                //     // Get the pathname, remove leading/trailing slashes "/"
-                //     let path = url.pathname.replace(/^\/|\/$/g, "");
+        await load("/components/C.jsx");
+        await load("/components/B/index.jsx");
+        await load("/components/A/index.jsx");
+        await load("/App.jsx");
+        await load("/index.js");
+      });
 
-                //     // Remove 'index.js', 'index.jsx', '.js', '.jsx'
-                //     path = path.replace(/(\/index)?\.(js|jsx)$/i, "");
-
-                //     // Split by '/' and join the segments into a single string
-                //     return path.split("/").join("");
-                // };
-
-                await fetch(url)
-                    .then(response => response.text())
-                    .then(
-                        text =>
-                            Babel.transform(text, {
-                                // filename: normalizedFilename(url), // global.unknown if no filename
-                                // filename: new URL(url, window.location.href).href, // only apply baseURL for relative or absolute path
-                                filename: url,
-                                // sourceType: "module",
-                                presets: [[Babel.availablePresets["react"]]],
-                                plugins: [
-                                    [
-                                        Babel.availablePlugins["transform-modules-umd"],
-                                        { exactGlobals: true },
-                                    ],
-                                ],
-                            }).code
-                    )
-                    // .then(code => console.log(code))
-                    .then(code => eval(code));
-            };
-
-            // await fetch("/components/A/index.jsx")
-            //     .then(response => response.text())
-            //     .then(
-            //         text =>
-            //             Babel.transform(text, {
-            //                 filename: "componentsA",
-            //                 sourceType: "module",
-            //                 presets: ["react"],
-            //                 plugins: [
-            //                     [
-            //                         Babel.availablePlugins["transform-modules-umd"],
-            //                         { exactGlobals: true },
-            //                     ],
-            //                 ],
-            //             }).code
-            //     )
-            //     // .then(code => code.replace("global.unknown = mod.exports", "global.App = mod.exports"))
-            //     // .then(code => console.log(code))
-            //     .then(code => eval(code));
-
-            // await fetch("/App.jsx")
-            //     .then(response => response.text())
-            //     .then(
-            //         text =>
-            //             Babel.transform(text, {
-            //                 filename: "App",
-            //                 sourceType: "module",
-            //                 presets: ["react"],
-            //                 plugins: [
-            //                     [
-            //                         Babel.availablePlugins["transform-modules-umd"],
-            //                         { exactGlobals: true },
-            //                     ],
-            //                 ],
-            //             }).code
-            //     )
-            //     // .then(code => code.replace("global.unknown = mod.exports", "global.App = mod.exports"))
-            //     // .then(code => console.log(code))
-            //     .then(code => eval(code));
-            // await fetch("/index.js")
-            //     .then(response => response.text())
-            //     .then(
-            //         text =>
-            //             Babel.transform(text, {
-            //                 filename: "index",
-            //                 sourceType: "module",
-            //                 presets: ["react"],
-            //                 plugins: [
-            //                     [
-            //                         Babel.availablePlugins["transform-modules-umd"],
-            //                         { exactGlobals: true },
-            //                     ],
-            //                 ],
-            //             }).code
-            //     )
-            //     // .then(code => console.log(code))
-            //     .then(code => eval(code));
-
-            await load("/components/C.jsx");
-            await load("/components/B/index.jsx");
-            await load("/components/A/index.jsx");
-            await load("/App.jsx");
-            await load("/index.js");
-        });
-
-        Array.from(document.body.getElementsByTagName("script")).forEach(script =>
-            script.remove()
-        );
-        // window.location.href = "/"
+      Array.from(document.body.getElementsByTagName("script")).forEach(script =>
+        script.remove()
+      );
+      // window.location.href = "/"
     </script>
 
     <!-- <script>
         history.pushState({}, null, "index.htm");
     </script> -->
-</body>
-
+  </body>
 </html>
